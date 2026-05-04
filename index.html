@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>𝗚𝗨𝗟𝗟 𝗞𝗛𝗔𝗡 𝗪𝗘𝗕 𝗦𝗘𝗥𝗩𝗘𝗥</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+    --bg-color: #111;
+    --text-color: #fff;
+    --card-bg: rgba(255,255,255,0.05);
+    --highlight-color: #00ff88;
+    --search-bg: #222;
+    --download-hd: linear-gradient(90deg,#00ff88,#00cc55);
+    --download-sd: linear-gradient(90deg,#00ccff,#0066ff);
+}
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    overflow-x:hidden;
+    transition: background 0.7s ease, color 0.7s ease;
+}
+/* DRAWER */
+.drawer{
+    position:fixed;
+    top:0;
+    left:0;
+    width:0;
+    height:55%;
+    background:rgba(0,0,0,0.8);
+    backdrop-filter:blur(12px);
+    overflow:hidden;
+    z-index:1000;
+    transition:0.4s;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:15px;
+    padding-left:0px;
+    border-radius:0 25px 300px 0;
+}
+.drawer::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    padding:3px;
+    border-radius:0 25px 500px 0;
+    background:linear-gradient(270deg,#00ff88,#00ccff,#ff00ff,#00ff88);
+    background-size:600% 600%;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+    animation:borderMove 6s linear infinite;
+}
+@keyframes borderMove{
+    0%{background-position:0%}
+    100%{background-position:200%}
+}
+.drawer a{
+    padding:15px;
+    font-size:40px;
+    color: var(--highlight-color);
+    text-decoration:none;
+    display:block;
+    transition:0.5s;
+    z-index:1002;
+    border-radius:10px;
+}
+.drawer a:hover{
+    background:rgba(0,255,136,0.2);
+    color:#fff;
+}
+.closebtn{
+    position:absolute;
+    right:15px;
+    top:10px;
+    font-size:100px;
+    cursor:pointer;
+    z-index:1003;
+}
+#openDrawerBtn{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 60px;
+    background: linear-gradient(45deg,#00ff88,#00ccff);
+    border:none;
+    padding:10px;
+    border-radius:10px;
+    cursor:pointer;
+    z-index:1001;
+}
+h1{text-align:center;font-size:80px;margin-top:80px;}
+.rainbow-text{
+    font-weight:bold;
+    background:linear-gradient(90deg,red,magenta,blue,cyan,green,yellow,red);
+    background-size:200%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:shimmer 3s linear infinite;
+}
+@keyframes shimmer{0%{background-position:100%}100%{background-position:-100%}}
+.search-container{text-align:center;margin:20px;}
+.search-container input{
+    width:600%;
+    max-width:700px;
+    padding:35px;
+    font-size:35px;
+    border-radius:15px;
+    border:none;
+    background: var(--search-bg);
+    color: var(--text-color);
+}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+    padding:20px;
+}
+.movie{
+    background: var(--card-bg);
+    border-radius:15px;
+    overflow:hidden;
+    text-align:center;
+    transition:0.7s;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+.movie img{
+    width:100%;
+    height:450px;
+    object-fit:cover;
+}
+.movie h3 {
+    font-size:30px;
+    font-weight:bold;
+    color: var(--highlight-color);
+    margin:12px 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.movie.active-touch::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,rgba(255,255,255,0.8),transparent);
+    animation:slide 0.5s;
+    border-radius:15px;
+}
+@keyframes slide{from{left:-100%}to{left:100%}}
+.download {
+    display: block;
+    margin: 8px auto 15px auto;
+    padding: 10px 45px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 25px;
+    text-align:center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.7s ease, background 0.7s ease, color 0.7s ease;
+    color:#fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.download.hd {background: var(--download-hd);}
+.download.sd {background: var(--download-sd);}
+.download:active{transform:scale(0.95);}
+.ripple{
+    position:absolute;
+    border-radius:50%;
+    transform:scale(0);
+    animation:ripple-effect 0.6s linear forwards;
+    pointer-events:none;
+    opacity:0.5;
+}
+@keyframes ripple-effect{to{transform:scale(6);opacity:0;}}
+.fadeIn{opacity:0;transform:translateY(20px);animation:fadeUp 0.6s forwards;}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- DRAWER -->
+<div id="myDrawer" class="drawer">
+    <a href="javascript:void(0)" id="drawerNightToggle"><i id="drawerToggleIcon">🌙</i> Night Mode</a>
+    <a href="https://www.youtube.com/" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+    <a href="https://www.facebook.com/share/1BTtkqEN28/" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+    <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+    <a href="https://whatsapp.com/channel/0029VbCbSoPCMY0JBsgwbx2q" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    <a href="https://www.tiktok.com/@pathanwala1?_r=1&_t=ZS-95FeKKKwM3G" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+    <a href="#" onclick="shareWebsite()"><i class="fas fa-share-alt"></i> Share</a>
+    <a href="javascript:void(0)" id="drawerMusicToggle"><i class="fas fa-music"></i> Music</a>
+    <span class="closebtn" onclick="closeDrawer()">×</span>
+</div>
+
+<!-- Drawer Button -->
+<div style="position:relative; height:100px; width:100%;">
+    <button id="openDrawerBtn" onclick="openDrawer()">☰</button>
+</div>
+
+<h1><span class="rainbow-text">𝗚𝗨𝗟𝗟 𝗞𝗛𝗔𝗡 𝗪𝗘𝗕</span></h1>
+
+<div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search movies...">
+</div>
+
+<div class="grid" id="movieGrid"></div>
+
+<!-- BACKGROUND MUSIC -->
+<audio id="bgMusic" loop>
+    <source src="https://raw.githubusercontent.com/gullnoor596-svg/Gullkhanwebserver/main/Modern%20Talking%20-%20Cheri%20Cheri%20Lady%20(Lyrics)(720P_HD)(mp3).mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// Drawer
+function openDrawer(){document.getElementById("myDrawer").style.width="300px";}
+function closeDrawer(){document.getElementById("myDrawer").style.width="0";}
+
+// Share
+function shareWebsite(){
+    const url = "https://gullnoor596-svg.github.io/MoviesServer/";
+    if(navigator.share){navigator.share({title:"GULLKHAN WEBSITE",text:"Check this website!",url:url});}
+    else if(navigator.clipboard){navigator.clipboard.writeText(url).then(()=>alert("Link copied!"));}
+    else{prompt("Copy this link:",url);}
+}
+
+// Movies array + Hollywood placeholders
+let movies=[
+    {name:"Prince of Persia The Sands of Time",img:"https://www.mp4moviez.care/cover/prince-of-persia:-the-sands-of-time-(2010)-hindi-dubbed-movie.jpg", link1:"https://fast-dl.org/dl/e29732", link2:"https://new6.filesdl.top/gfile.php?id=aHR0cHM6Ly9waG90b3MuYXBwLmdvby5nbC9vZWNhZkprWUN1dEhGdEUxNg=="},
+    {name:"V for Vendetta", img:"https://imgshare.info/images/2025/04/26/V.for.Vendetta.2005..jpg", link1:"https://pixeldrain.dev/u/XJcPnuBR", link2:"https://pixeldrain.dev/u/No7RJYFa"},
+    {name:"The Green Mile", img:"https://mp4moviez.football/cover/the-green-mile-(1999)-hindi-dubbed-movie.jpg", link1:"https://pixeldrain.dev/u/zHthfKXo", link2:"https://drive.google.com/file/d/1s5L4J-_oShZZGP0lhTgIz-mKJT23K0p0/view?pli=1"},
+    {name:"The Spiderwick Chronicles", img:"https://images.justwatch.com/poster/183682366/s718/the-spiderwick-chronicles.jpg", link1:"https://mp4moviez.football/dl.php?id=22291&q=720&jio=yes&title=The-Spiderwick-Chronicles-(2008)-Hindi-Dubbed-BluRay", link2:"https://111.90.159.132/family/the-spiderwick-chronicles-12122023/"},
+    {name:"We Can Be Heroes",img:"https://www.mp4moviez.fyi/cover/we-can-be-heroes-2020-hindi-dubbed-full-movie.jpg", link1:"https://hub.maverick.lat/3a604138309fda0f99a80ec686015c17?token=1777345486", link2:"https://drive.google.com/file/d/1JtcFTTCFygVdH3DbEQ_SwbaiS-VSIUpQ/view?pli=1"},
+    {name:"Dolittle 2020",img:"https://www.mp4moviez.fyi/cover/dolittle-(2020)-hindi-org-dubbed.jpg", link1:"https://pixeldrain.dev/u/NGRdVSAE", link2:"https://pixeldrain.dev/u/BH64K2VY"},
+    {name:"Undisputed (2002) ",img:"https://myimg.click/images/2022/09/29/Undisputed-2002b40487c69394d1a4.jpg", link1:"https://pixeldrain.dev/u/LMJJzGnA", link2:"https://www.mp4moviez.fyi/dl.php?id=25192&q=720&jio=yes&title=Undisputed-(2002)-Hindi-Dubbed-BluRay"},
+    {name:"Undisputed (2006)",img:"https://myimg.click/images/2022/09/26/Undisputed-2233997387474e5c5.jpg", link1:"https://drive.google.com/file/d/1nU5LKlBGnWFPcG-YxOJ-GrSehPK8YU-d/view", link2:"https://www.mp4moviez.fyi/dl.php?id=25076&q=720&jio=yes&title=Undisputed-2:-Last-Man-Standing-(2006)-Hindi-Dubbed-BluRay"},
+    {name:"Undisputed (2010) ",img:"https://myimg.click/images/2022/09/25/MV5BMTc0YzA4YjQtZGZkMi00ZmRjLWFmM2ItMDcxZTYzZGU3Z1.jpg", link1:"https://drive.google.com/file/d/1PXe3cpHMhRXo0FxwZj9HS4a7y5-8UfCU/view", link2:"https://www.mp4moviez.fyi/dl.php?id=24968&q=720&jio=yes&title=Undisputed-3:-Redemption-(2010)-Hindi-Dubbed-BluRay"},
+    {name:"Undisputed (2016)",img:"https://myimg.click/images/2022/07/22/d4130fad-686e-4e0b.jpg", link1:"https://111.90.159.132/action/boyka-undisputed-iv/", link2:"https://www.mp4moviez.fyi/dl.php?id=22783&q=720&jio=yes&title=Boyka:-Undisputed-IV-(2016)-Hindi-Dubbed-BluRay"},
+    {name:"Peaky Blinders (2026)", img:"https://image.tmdb.org/t/p/w500/mKSnqcEOpr2hUq7moF4bJVBGZcO.jpg", link1:"https://hub.diskcdn.buzz/3b8e3b5292d74e9694cc76a85e40ed63?token=1777547852", link2:"https://pixeldrain.dev/u/VFR7QE3f"},
+    {name:"Peaky Blinders", img:"https://image.tmdb.org/t/p/w500/wMUNrwZmGKgFrclABHrRZD1jF49.jpg", link1:"https://gullnoor596-svg.github.io/Peaky-Blinders/", link2:" "},
+    {name:"The Witcher", img:"https://image.tmdb.org/t/p/w400/AoGsDM02UVt0npBA8OvpDcZbaMi.jpg", link1:"https://gullnoor596-svg.github.io/The-Witcher/", link2:" "},
+    {name:"Money Heist",img:"https://m.media-amazon.com/images/M/MV5BZDdkN2VjNWUtMmFiYS00NzgwLTkwZTItNTBiMjFlNGFiNTdhXkEyXkFqcGc@._V1_.jpg", link1:"https://gullnoor596-svg.github.io/Money-Heist-season-/", link2:""},
+    {name:"Reacher", img:"https://image.tmdb.org/t/p/w500/uF5v0SPpKzC9dWXIspA1x2zEDKO.jpg", link1:"https://gullnoor596-svg.github.io/Reacher/", link2:" "},
+    {name:"The Croods", img:"https://myimg.click/images/2021/09/12/27zvjVOtOi5ped1HSlJKNsKXkFH.jpg", link1:"https://pixeldrain.dev/u/QFsww44z", link2:"https://pixeldrain.dev/u/oeJPyhxp"},
+    {name:"The Croods 2", img:"https://imgshare.info/images/2025/10/12/The.Croods.A.New.Age.2020..jpg", link1:"https://pixeldrain.com/u/Q9XMwTUh", link2:"https://a-delivery28.mxcontent.net/d/q1mm7g8wtxrj4m/plpwcfw0gk2rbtdakvu?ab=0&r=https%3A%2F%2Fm1xdrop.click%2Ff%2Fq1mm7g8wtxrj4m"},
+    {name:"Chicken Run", img:"https://raw.githubusercontent.com/gullnoor596-svg/Movies-picture-/refs/heads/main/MV5BZGViZmJjMTQtNDk3NC00NjQ4LTg0ODItYWI3MjY3YmUwMjczXkEyXkFqcGc%40._V1_.jpg", link1:"https://pixeldrain.dev/u/iSAGkwtm", link2:"https://drive.google.com/file/d/1dB0dAinhDI1G3nNRb9BY388r1LKZlsww/view"},
+    {name:"Chicken Run 2", img:"https://catimages.org/images/2023/12/19/Chicken-Run-Dawn-of-the-Nugget.jpg", link1:"https://pixeldrain.dev/u/XfDTn29V", link2:"https://drive.google.com/file/d/1XU0mv8sWGzcYhr_Bozn6kyZobmPSOe_1/view"},
+    {name:"Shrek (2001)", img:"https://mp4moviez.football/cover/shrek-(2001)-hindi-dubbed-bluray.jpg", link1:"https://mp4moviez.football/dl.php?id=26697&q=720&jio=yes&title=Shrek-(2001)-Hindi-Dubbed-BluRay", link2:"https://www.pagalmovies.courses/download/4727/server_1"},
+    {name:"Shrek (2004)", img:"https://mp4moviez.football/cover/shrek-2-(2004)-hindi-dubbed-bluray.jpg", link1:"https://mp4moviez.football/dl.php?id=2407&q=720&jio=yes&title=Shrek-2-2004-Hindi-Dubbed-Full-Movie", link2:"https://111.90.159.132/animation/shrek-2/"},
+    {name:"Shrek (2007)", img:"https://mp4moviez.football/cover/shrek-the-third-2007-hindi-dubbed-full-movie.jpg", link1:"https://video-downloads.googleusercontent.com/ADGPM2kKKaDev6_5heTAxGSPUY14UvOBVNAn0Lk29Ef7J_qzsYDxgoTOzhNmpLT_cnCio9TMv3rdY4XVXAVu4KC6PGcKAFZ6QEJ9yGV1GUt3y0hTNlDip58LiOK7TK2Qzo7jcPXxSxhYOBBbGmQJzFOBc69wW91wW8Z8QCErWjTXjft15zgxBftS4ssPQqFIg8YanAAZeoPQ7ysuZrK8bB2HwbQUh_TYkfwEK0nrGBCUMop7ZL4Z_yAmx_0NjSCZ13LIw-c5K8QEiSGwmddlu7KW3KDC2rHdUeiVuxl6wXoewPYDy4fDO8kYdiSlq_UnTegcG6TfAgXWTO0gwcw4xK3gbp0Fk5ouJD-150nxzudFyzuuoGFsy_RVk12hKo3LxTeH4TeKTTw8GsRpFKSfpkRYFL8lJHCdCy4qsxhoB6oadu6G7LL6Ryjv2fcAIWArf7XBFhMTg4j6gCThEACZYklk1M4QZH9bCxvu0S9uo2BtCVC6iscPYa4wOtADSUJtigKLFS43ksoTHRrYecrXWoqxzDuB9YRnstXAVL583hWXDQPX_V_0jfJiy53gkgk9TkBYIGlG1tu_Ub5Wk199aq-_2dok6YPOi5zz-QwzN3PZdHsC0y-q0D2Hk_80QlK_oBKAG-qm6B-J3oG60ItdxOl1qECDWxWLjrTRK4Ixc1JtMiM2nuS2VSze9sOFQRQUJiwx2Pkqa4b0L5qJNetFAd1nP-DSTOjK1olzr7mV0AEnXm4R5LFfPjNcoW3y379TLrzSkObNN3qna7GMBArJjytj9_I_QYromIzMjS0uFNgXNfWRHlKtIpfBz4sv9358B-5TGOIZliPBt5K_MqetxqMsPz0B0y2pX2-gB_bHv4M-F7q9H-89rM_iEnv-OP_FNnjQk8IdpnUZ693iRGPmtCe0gj9LDE2snEeShzYtNe22nQk8HUqgfbz-0ffZ1j2Vq-kIOJ6ypjNLVWiSR-iq4eX24vIZS4Vmvd2sJJgE_UIPGyuocGuOm0OIMhUBCyi26PdVqr_-LCdFYpe2mpzSU1QhsvWXIK6GPjNXbLoxSObyGSIZElZKkfg8Jz_Wt2sNeYsR2krRjW2G", link2:"https://mp4moviez.football/dl.php?id=2408&q=720&jio=yes&title=Shrek-the-Third-2007-Hindi-Dubbed-Full-Movie"},
+    {name:"Shrek (2010)", img:"https://mp4moviez.football/cover/shrek-forever-after-(2010)-hindi-dubbed-bluray.jpg", link1:"https://video-downloads.googleusercontent.com/ADGPM2krWxYo4vNj9Xq7za2XE1ya4GDiENq7ondS9yV94qGPef-lKml1FfXCm0W3LOtONsAIRSIJhvEqSQQhsBkWdawboZoYB9Wbxrl_8JIwf7vziAW9BwQJF5creiHdQmPAIyvsJO-yRo5Ng-uMc0H-ByuosAZXhDzq8Nt6Ypgv05g3DEmcthtaMkDHeqwYLz4f-sSalFKsnKK2ZPeIqPw7ND3G8Tmn-LyHqQvn6Rp6fmDhL6GzXj5sJaaRUYRsa5Ixn6HyJBC3moduLqwjN0PJfVv171YLFTaX8Yqb3uOZ7vVT2Dzuz9EX1FiLvX5uSy64v8_kgLZAEs7Y-LAyPkKOTvMoxexqIsPy9KM5NBfiDkz2-PzyEbeaX5uCRSZBb7IZga4uISPdAC5C_h0zk0qHOmV2YRCk0ge42R7SfymDfBGE3FneGWc3EbvHZbRsh_FSNUAGHElza1NQyR6wHmR6gbDJ441cY511Pq78i0EoMpqPIX9vvmG-e7IMpvXg8E5BtfLgsKcpIz9yEnhNVCI8-h9Pge8p86KLYKXarLyiisD2w027E4_I55iScrcxmqnTTq7tN3zIAcFa41CQepUUmgoOAR9IG1QCSbaSJruFHM183BVSiahUDZXKl2PlVb3flRqdPdfoX_SRMvLb0laXUNk_RN3_ZQ6W4bRVs9Z5hhFTXZ9_sB7WBoV2qjF9_Yr-jtLXWzmhpqkyKcFvTZIt3VlG7rYpkWKljEiwBD4Jy-YV-bb7MJXw9hBuBG6jZukTqrvAmBTfSZBXQw_JNhaEQ0Xy1rdNUariBigIqwoBy55ED8Z_wDrsfrKoOybPMnpIp6TN7FRhDecvUHW7vpApPR8OXhJ4ceN2Wc4nFrtfITEkCMWiAsqPZgoEm1mOJ2N8DEmylEB_hNTGJ5iUa0qteCkaUT2YE-c8I3ZlRZyBzNLqQer9Z0s-ZP0HtDnFKYtXcBO3g_tr1fCviUjOxvB-NuyYjIlBJKbO07cNGMn2yas-q9wCWNZGhq8doojauL4Ju4z6l4q4LdTJfsYBbVdL_je6m4yAuuQ9YUdmZtQnB1XqqN0pNDIS0w-2X0vRhkXTuJ1XFtPX", link2:"https://mp4moviez.football/dl.php?id=2406&q=720&jio=yes&title=Shrek-Forever-After-2010-Hindi-DUbbed-Full-Movie"},
+    {name:"Shrek 5 (upcoming)", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpqdbwuTrRlDTt7u3f6w00aiBRYcWgTNF8M_e_BlCQqnFMrPHSodTyMfQW&s=10", link1:"   ", link2:"  "},
+    {name:"Puss in Boots (2011)", img:"https://imgshare.info/images/2026/03/17/Puss.in.Boots.2011..jpg", link1:"https://pixeldrain.dev/u/8J4h7RKc", link2:"https://mp4moviez.football/dl.php?id=22841&q=720&jio=yes&title=Puss-in-Boots-(2011)-Hindi-Dubbed-BluRay"},
+    {name:"Puss in Boots (2022)", img:"https://catimages.org/images/2023/01/08/Puss-in-Boots-The-Last-Wish-2022.jpg", link1:"https://pixeldrain.dev/u/AXpARQ6F", link2:"https://pixeldrain.dev/u/pXTktV7H"},
+    {name:"Cars (2006) ",img:"https://imgshare.info/images/2025/06/05/Cars-2006.jpg", link1:"https://drive.google.com/file/d/1SMxSiaonr45Fa8sYCk8MVMqIiGgOed_h/view", link2:"https://driveseed.org/file/Pje1pLTZiYPneBOiUZBP"},
+    {name:"Cars (2011) ",img:"https://imgshare.info/images/2025/06/05/Cars-2-2011.jpg", link1:"https://drive.google.com/file/d/1PbGxWmBiJ2rQs5AsPKmBU0IVZNFLSEFs/view", link2:"https://driveseed.org/file/F3LEqv7l8qTrG26K9kLb"},
+    {name:"Cars (2017) ",img:"https://imgshare.info/images/2025/06/05/Cars-3-2017.jpg", link1:"https://pixeldrain.dev/u/N3bpVo53", link2:"https://pixeldrain.dev/u/b2hCKrDc"},
+    {name:"Delhi Safari 2012",img:"https://www.mp4moviez.fyi/cover/delhi-safari-2012-hindi-dubbed-full-movie.jpg", link1:"https://92xseh0ry.mxcontent.net/d/pjp1m1rebo6evr/clsf1ruj3lu6b06w?ab=0&r=https%3A%2F%2Fm1xdrop.click%2Ff%2Fpjp1m1rebo6evr", link2:"https://www.mp4moviez.fyi/dl.php?id=2395&q=720&jio=yes&title=Delhi-Safari-2012-Hindi-Dubbed-Full-Movie"},
+    {name:"Madagascar (2005)",img:"https://www.mp4moviez.fyi/cover/madagascar-(2005)-hindi-dubbed-movie.jpg", link1:"https://pixeldrain.dev/u/o5JE2muo", link2:"https://www.mp4moviez.fyi/dl.php?id=51934&q=720&jio=yes&title=Madagascar-(2005)-Hindi-Dubbed-Movie", link2:"https://www.mp4moviez.fyi/dl.php?id=51934&q=720&jio=yes&title=Madagascar-(2005)-Hindi-Dubbed-Movie"},
+    {name:"Madagascar (2008)",img:"https://www.mp4moviez.fyi/cover/madagascar-escape-2-africa-(2008)-hindi-dubbed-movie.jpg", link1:"https://pixeldrain.dev/u/14WdEQcf", link2:"https://www.mp4moviez.fyi/dl.php?id=46967&q=720&jio=yes&title=Madagascar-Escape-2-Africa-(2008)-Hindi-Dubbed-Movie"},
+    {name:"Madagascar (2012)",img:"https://imgshare.info/images/2025/05/06/Madagascar.3.Europes.Most.Wanted.2012.jpg", link1:"https://pixeldrain.dev/u/Fj5K782m", link2:"https://www.mp4moviez.fyi/dl.php?id=42074&q=720&jio=yes&title=Madagascar-3:-Europes-Most-Wanted-(2012)-Hindi-Dubbed-Movie"},
+    {name:"Madagascar (2014)",img:"https://imgshare.info/images/2026/02/22/Penguins.of.Madagascar.2014.jpg", link1:"https://pixeldrain.dev/u/ecW5XPoW", link2:"https://fast-dl.org/dl/b539f9"},
+    {name:"The Lion King (1994)",img:"https://image.tmdb.org/t/p/w400/sKCr78MXSLixwmZ8DyJLrpMsd15.jpg", link1:"https://drive.google.com/file/d/1rCJYDdc823M-gHFDMD6CdZN3FItWnA9w/view", link2:"https://www.mp4moviez.fyi/dl.php?id=2182&q=720&jio=yes&title=The-Lion-King-1994-Hindi-Dubbed-Full-Movie"},
+    {name:"The Lion King (1998)",img:"https://image.tmdb.org/t/p/w400/4EaAtgfNjrH9x0qy59IkRRApDcY.jpg", link1:"https://drive.google.com/file/d/1p462yMfqHvhgwqjOFo2xADoZUDHTb4JC/view", link2:"https://www.mp4moviez.fyi/dl.php?id=5024&q=720&jio=yes&title=The-Lion-King-2:-Simbas-Pride-1998-Hindi-Dubbed-Movie"},
+    {name:"The Lion King (2004)",img:"https://image.tmdb.org/t/p/w400/sVJME5R1NmTXtbdnAxYPx7Xa7kr.jpg", link1:"https://pixeldrain.dev/u/TGt5kswG", link2:"https://111.90.159.132/family/the-lion-king-1%c2%bd/#download"},
+    {name:"Smurfs (2011)",img:"https://www.mp4moviez.fyi/cover/the-smurfs-(2011)-hindi-dubbed-movie.jpg", link1:"https://hub.odyssey.surf/e0b3d17de2b42adb0f3376389577b08b?token=1777432988", link2:"https://www.mp4moviez.fyi/dl.php?id=48114&q=720&jio=yes&title=The-Smurfs-(2011)-Hindi-Dubbed-Movie"},
+    {name:"Smurfs (2013)",img:"https://imgshare.info/images/2026/03/08/The.Smurfs.2.2013..jpg", link1:"https://hub.odyssey.surf/f3da520ad3a3072cd1685ed9241ed19a?token=1777433163", link2:"https://hub.odyssey.surf/5804f7feade514c9a2a22f378a631610?token=1777433234"},
+    {name:"Smurfs (2017)",img:"https://cdn.kinocheck.com/i/dwpnqj8epb.jpg", link1:"https://fast-dl.org/dl/521c63", link2:"https://www.pagalmovies.courses/download/4696/server_1"},
+    {name:"Smurfs (2025)",img:"https://image.tmdb.org/t/p/w500/8o6lkhL32xQJeB52IIG1us5BVey.jpg", link1:"https://hub.odyssey.surf/885e73ea47dad8eeff381df676e5af1a?token=1777434171", link2:"https://hub.odyssey.surf/d40f335a1c6bff5e7183c8c2276053be?token=1777434233"},
+    {name:"The SpongeBob (2004)",img:"https://www.mp4moviez.fyi/cover/the-spongebob-squarepants-movie-2004-hindi-dubbed-full-movie.jpg", link1:"https://www.mp4moviez.fyi/dl.php?id=38398&q=720&jio=yes&title=The-SpongeBob-SquarePants-Movie-(2004)-Hindi-Dubbed-Movie", link2:"https://www.mp4moviez.fyi/dl.php?id=5171&q=720&jio=yes&title=The-SpongeBob-SquarePants-Movie-2004-Hindi-Dubbed-Full-Movie"},
+    {name:"The SpongeBob (2015)",img:"https://www.mp4moviez.fyi/cover/the-spongebob-movie:-sponge-out-of-water-(2015)-hindi-dubbed-movie.jpg", link1:"https://www.mp4moviez.fyi/dl.php?id=38399&q=720&jio=yes&title=The-SpongeBob-Movie:-Sponge-Out-of-Water-(2015)-Hindi-Dubbed-Movie", link2:"https://www.mp4moviez.fyi/dl.php?id=901&q=720&jio=yes&title=The-SpongeBob-Movie-Sponge-Out-of-Water-2015-Hindi-Dubbed"},
+    {name:"The SpongeBob (2020)",img:"https://www.mp4moviez.fyi/cover/the-spongebob-movie:-sponge-on-the-run-(2020)-hindi-dubbed-movie.jpg", link1:"https://drive.google.com/file/d/1cmqWVBhqx-PEponrDU_Pd6U9YRQeyQIo/view?pli=1", link2:"https://www.mp4moviez.fyi/dl.php?id=38400&q=720&jio=yes&title=The-SpongeBob-Movie:-Sponge-on-the-Run-(2020)-Hindi-Dubbed-Movie"},
+    {name:"The SpongeBob (2024)",img:"https://www.mp4moviez.fyi/cover/saving-bikini-bottom:-the-sandy-cheeks-movie-(2024)-hindi-dubbed.jpg", link1:"https://www.mp4moviez.fyi/dl.php?id=41001&q=720&jio=yes&title=Saving-Bikini-Bottom:-The-Sandy-Cheeks-Movie-(2024)-Hindi-Dubbed", link2:"https://www.mp4moviez.fyi/dl.php?id=41001&q=480&jio=yes&title=Saving-Bikini-Bottom:-The-Sandy-Cheeks-Movie-(2024)-Hindi-Dubbed"},
+    {name:"The SpongeBob (2025)",img:"https://image.tmdb.org/t/p/w500/pDWYW9v8fmJdA7N0I1MOdQA3ETq.jpg", link1:"https://hub.odyssey.surf/0ba80c0b70e1949f032985870354da84?token=1777436990", link2:"https://hub.odyssey.surf/862c3c51c45cee70f1e31f965b351196?token=1777437056"},
+    
+];
+// Add placeholder Hollywood 6-1000
+for(let i=6;i<=100;i++){movies.push({name:"Hollywood "+i,img:`https://via.placeholder.com/300x450?text=Hollywood+${i}`,link1:"#",link2:"#"});}
+
+// Grid batch loading
+const grid=document.getElementById("movieGrid");
+const batchSize=50;
+let currentIndex=0;
+
+function loadBatch(list=movies){
+    const nextBatch=list.slice(currentIndex,currentIndex+batchSize);
+    nextBatch.forEach(m=>{
+        let box=document.createElement("div");
+        box.className="movie fadeIn";
+        box.innerHTML=`
+            <img src="${m.img}" alt="${m.name}">
+            <h3>${m.name}</h3>
+            <a class="download hd" href="${m.link1}" target="_blank">Download HD</a>
+            <a class="download sd" href="${m.link2}" target="_blank">Download SD</a>
+        `;
+        grid.appendChild(box);
+        // touch effect
+        box.addEventListener("touchstart", e=>{
+            if(!e.target.classList.contains('download')) box.classList.add("active-touch");
+        });
+        box.addEventListener("touchend",()=>setTimeout(()=>box.classList.remove("active-touch"),300));
+    });
+    currentIndex+=batchSize;
+}
+
+// Initial load
+loadBatch();
+
+// Infinite scroll
+window.addEventListener('scroll', ()=>{
+    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 200){
+        if(currentIndex<movies.length){
+            loadBatch();
+        }
+    }
+});
+
+// Search
+document.getElementById("searchInput").addEventListener("input",(e)=>{
+    let q=e.target.value.toLowerCase();
+    currentIndex=0;
+    grid.innerHTML="";
+    let filtered=movies.filter(m=>m.name.toLowerCase().includes(q));
+    loadBatch(filtered);
+});
+
+// Music toggle
+const musicBtn = document.getElementById('drawerMusicToggle');
+const music = document.getElementById('bgMusic');
+let isPlaying = false;
+musicBtn.addEventListener('click', ()=>{
+    if(!isPlaying){music.play().catch(()=>alert("Tap to play audio first")); musicBtn.innerHTML='<i class="fas fa-volume-up"></i> Playing';} 
+    else {music.pause(); musicBtn.innerHTML='<i class="fas fa-music"></i> Music';}
+    isPlaying = !isPlaying;
+});
+
+// Night mode
+const nightBtn = document.getElementById('drawerNightToggle');
+const toggleIcon = document.getElementById('drawerToggleIcon');
+let nightMode = localStorage.getItem('nightMode')==='false'? false : true;
+function applyMode(night){
+    if(!night){
+        document.documentElement.style.setProperty('--bg-color','#fff');
+        document.documentElement.style.setProperty('--text-color','#111');
+        document.documentElement.style.setProperty('--card-bg','rgba(0,0,0,0.05)');
+        document.documentElement.style.setProperty('--highlight-color','#ff00aa');
+        document.documentElement.style.setProperty('--search-bg','#eee');
+        toggleIcon.textContent='☀️';
+    } else {
+        document.documentElement.style.setProperty('--bg-color','#111');
+        document.documentElement.style.setProperty('--text-color','#fff');
+        document.documentElement.style.setProperty('--card-bg','rgba(255,255,255,0.05)');
+        document.documentElement.style.setProperty('--highlight-color','#00ff88');
+        document.documentElement.style.setProperty('--search-bg','#222');
+        toggleIcon.textContent='🌙';
+    }
+    localStorage.setItem('nightMode', night);
+}
+applyMode(nightMode);
+nightBtn.addEventListener('click', ()=>{
+    nightMode = !nightMode;
+    applyMode(nightMode);
+});
+</script>
+</body>
+</html>
